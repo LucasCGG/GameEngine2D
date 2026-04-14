@@ -13,15 +13,12 @@ import javafx.stage.Stage;
 public class Window extends Application {
 
     private int width, height;
-    private String title;
+    private final String title;
     private Color clearColor = Color.BLACK;
     private static Window window = null;
     private static GameScene currentScene = null;
 
     private static StackPane root;
-
-    private long audioContext;
-    private long audioDevide;
 
     public Window() {
         this.width = 1920;
@@ -40,18 +37,16 @@ public class Window extends Application {
 
     public static void changeScene(int newScene) {
         switch (newScene) {
-            case 0:
+            case 0 -> {
                 currentScene = new LevelEditorScene();
                 currentScene.init(window.width, window.height);
-                break;
-            case 1:
+            }
+            case 1 -> {
                 currentScene = new LevelScene();
                 currentScene.init(window.width, window.height);
-                break;
-            default:
-                assert false : "Unknown scene '" + newScene + "'";
-                break;
-
+            }
+            default ->
+                throw new IllegalArgumentException("Unknown scene '" + newScene + "'");
         }
     }
 
@@ -74,6 +69,22 @@ public class Window extends Application {
 
         root = new StackPane(canvas);
         Scene scene = new Scene(root, width, height);
+
+        canvas.widthProperty().bind(scene.widthProperty());
+        canvas.heightProperty().bind(scene.heightProperty());
+
+        scene.widthProperty().addListener((obs, oldVal, newVal) -> {
+            window.width = newVal.intValue();
+            if (currentScene != null) {
+                currentScene.onResize(window.width, window.height);
+            }
+        });
+        scene.heightProperty().addListener((obs, oldVal, newVal) -> {
+            window.height = newVal.intValue();
+            if (currentScene != null) {
+                currentScene.onResize(window.width, window.height);
+            }
+        });
 
         // Wire up listeners
         MouseListener mouse = MouseListener.get();
@@ -127,7 +138,7 @@ public class Window extends Application {
                 lastTime = Time.getTime();
 
                 graphicsCtx.setFill(clearColor);
-                graphicsCtx.fillRect(0, 0, width, height);
+                graphicsCtx.fillRect(0, 0, window.width, window.height);
 
                 if (currentScene != null) {
                     currentScene.update((float) deltaTime);

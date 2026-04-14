@@ -111,7 +111,7 @@ public class LevelEditorScene extends GameScene {
 
         if (KeyListener.get().isKeyDown(KeyCode.SPACE)) {
             anim.play("jump");
-            playSoundWithCooldown("jump", deltaTime);
+            playSoundWithCooldown("jump");
         } else if (anim.getCurrentName().equals("jump") && anim.isFinished()) {
             anim.play("idle");
         } else if (moving) {
@@ -149,7 +149,7 @@ public class LevelEditorScene extends GameScene {
             } else {
                 collidingObjects.add(result.a.name);
                 collidingObjects.add(result.b.name);
-                playSoundWithCooldown("hit", deltaTime);
+                playSoundWithCooldown("hit");
                 System.out.println(result.a.name + " collided with " + result.b.name);
             }
         }
@@ -169,6 +169,12 @@ public class LevelEditorScene extends GameScene {
         renderColliders(graphicsCtx);
     }
 
+    @Override
+    public void onResize(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
     private void renderColliders(GraphicsContext graphicsCtx) {
         graphicsCtx.setLineWidth(1);
 
@@ -176,19 +182,24 @@ public class LevelEditorScene extends GameScene {
             Collider c = collisionWorld.getCollider(obj);
             boolean hitting = collidingObjects.contains(obj.name);
 
-            if (c instanceof AABBCollider a) {
-                graphicsCtx.setStroke(hitting ? Color.RED : Color.GREEN);
-                graphicsCtx.strokeRect(a.getLeft() - camera.x, a.getTop() - camera.y, a.width, a.height);
-            } else if (c instanceof CircleCollider cr) {
-                graphicsCtx.setStroke(hitting ? Color.RED : Color.GREEN);
-                graphicsCtx.strokeOval(cr.getCenterX() - cr.radius - camera.x, cr.getCenterY() - cr.radius - camera.y, cr.radius * 2, cr.radius * 2);
+            switch (c) {
+                case AABBCollider a -> {
+                    graphicsCtx.setStroke(hitting ? Color.RED : Color.GREEN);
+                    graphicsCtx.strokeRect(a.getLeft() - camera.x, a.getTop() - camera.y, a.width, a.height);
+                }
+                case CircleCollider cr -> {
+                    graphicsCtx.setStroke(hitting ? Color.RED : Color.GREEN);
+                    graphicsCtx.strokeOval(cr.getCenterX() - cr.radius - camera.x, cr.getCenterY() - cr.radius - camera.y, cr.radius * 2, cr.radius * 2);
+                }
+                default -> {
+                }
             }
 
         }
     }
 
-    private void playSoundWithCooldown(String name, float deltaTime) {
-        soundCooldowns.merge(name, 0f, (oldVal, zero) -> oldVal); // ensure key exists
+    private void playSoundWithCooldown(String name) {
+        soundCooldowns.merge(name, 0f, (oldVal, zero) -> oldVal);
         float remaining = soundCooldowns.getOrDefault(name, 0f);
         if (remaining <= 0) {
             AudioManager.get().playSound(name);
@@ -201,15 +212,15 @@ public class LevelEditorScene extends GameScene {
     }
 
     public void buildVolumePanel() {
-        Slider masterSlider = createSlider("Master", 1.0);
+        Slider masterSlider = createSlider(1.0);
         masterSlider.valueProperty().addListener((obs, olVal, newVal)
                 -> AudioManager.get().setMasterVolume(newVal.floatValue()));
 
-        Slider sfxSlider = createSlider("SFX", 1.0);
+        Slider sfxSlider = createSlider(1.0);
         sfxSlider.valueProperty().addListener((obs, olVal, newVal)
                 -> AudioManager.get().setSfxVolume(newVal.floatValue()));
 
-        Slider musicSlider = createSlider("Music", 1.0);
+        Slider musicSlider = createSlider(1.0);
         musicSlider.valueProperty().addListener((obs, olVal, newVal)
                 -> AudioManager.get().setMusicVolume(newVal.floatValue()));
 
@@ -231,7 +242,7 @@ public class LevelEditorScene extends GameScene {
         Window.getRoot().getChildren().add(panel);
     }
 
-    private Slider createSlider(String name, double initialValue) {
+    private Slider createSlider(double initialValue) {
         Slider slider = new Slider(0.0, 1.0, initialValue);
         slider.setShowTickMarks(false);
         slider.setPrefWidth(180);

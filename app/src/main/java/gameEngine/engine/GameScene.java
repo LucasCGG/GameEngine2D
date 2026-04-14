@@ -24,4 +24,6 @@ public abstract class GameScene {
     public abstract void update(float deltaTime);
 
     public abstract void render(GraphicsContext graphicsCtx);
+
+    public abstract void onResize(int width, int height);
 }

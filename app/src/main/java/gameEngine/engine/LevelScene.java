@@ -11,6 +11,11 @@ public class LevelScene extends GameScene {
     }
 
     @Override
+    public void onResize(int width, int height) {
+
+    }
+
+    @Override
     public void update(float deltaTime) {
     }
 
