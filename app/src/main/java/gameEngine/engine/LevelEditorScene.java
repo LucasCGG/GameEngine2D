@@ -7,33 +7,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import gameEngine.attributes.Attributes;
 import gameEngine.audio.AudioManager;
 import gameEngine.physics.AABBCollider;
 import gameEngine.physics.CircleCollider;
 import gameEngine.physics.Collider;
 import gameEngine.physics.CollisionResult;
-import gameEngine.sprites.Animation;
-import gameEngine.sprites.Animator;
 import gameEngine.sprites.Sprite;
-import gameEngine.sprites.SpriteSheet;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class LevelEditorScene extends GameScene {
 
     private List<GameObject> gameObjects = new ArrayList<>();
     private Set<String> collidingObjects = new HashSet<>();
-    private Sprite player;
+    private Player player;
     private Sprite item;
     private float fps;
-    private float speed = 300;
 
     private Map<String, Float> soundCooldowns = new HashMap<>();
-    private static final float HIT_SOUND_COOLDOWN = 0.5f; // sec
+    private static final float HIT_SOUND_COOLDOWN = 0.5f;
 
     public LevelEditorScene() {
     }
@@ -43,105 +44,38 @@ public class LevelEditorScene extends GameScene {
         System.out.println("LevelEditorScene initialized: " + width + "x" + height);
         super.init(width, height);
 
-        // Load audio
         AudioManager audio = AudioManager.get();
         audio.loadMusic("bgm", "assets/audio/back_to_nature.mp3");
         audio.loadSound("jump", "assets/audio/jumpland44100.mp3");
         audio.loadSound("hit", "assets/audio/metalthunk.mp3");
-
         audio.playMusic("bgm");
 
         buildVolumePanel();
+        showAttributes();
 
-        /**
-         * Static sprite
-         */
-        //player = new Sprite("player", "assets/images/platformChar_idle.png", new Transform(100, 100, 128, 128));
-        //gameObjects.add(player);
         item = new Sprite("rock", "assets/images/platformPack_item005.png",
                 new Transform(400, 400, 64, 64));
         gameObjects.add(item);
-        /**
-         * Animator SpriteSheet
-         */
-        SpriteSheet sheet = new SpriteSheet("assets/images/platformerPack_character.png", 100, 100);
 
-        Animation idle = new Animation("idle", sheet, new int[]{0, 6}, 0.4f, true);
-        Animation walk = new Animation("walk", sheet, new int[]{2, 3}, 0.15f, true);
-        Animation jump = new Animation("jump", sheet, new int[]{1}, 0.15f, false);
+        player = new Player(100, 100);
+        gameObjects.add(player.getSprite());
 
-        Animator animator = new Animator();
-        animator.addAnimation(idle);
-        animator.addAnimation(walk);
-        animator.addAnimation(jump);
-        animator.play("idle");
-
-        player = new Sprite("player", animator, new Transform(100, 100, 128, 128));
-        gameObjects.add(player);
-
-        collisionWorld.register(player, new AABBCollider(player.transform));
+        collisionWorld.register(player.getSprite(), new AABBCollider(player.transform));
         collisionWorld.register(item, new CircleCollider(item.transform));
     }
 
     @Override
     public void update(float deltaTime) {
         fps = 1.0f / deltaTime;
-
-        boolean moving = false;
         updateCooldowns(deltaTime);
 
-        if (KeyListener.get().isKeyDown(KeyCode.RIGHT) || KeyListener.get().isKeyDown(KeyCode.D)) {
-            player.transform.x += speed * deltaTime;
-            moving = true;
-        }
-        if (KeyListener.get().isKeyDown(KeyCode.LEFT) || KeyListener.get().isKeyDown(KeyCode.A)) {
-            player.transform.x -= speed * deltaTime;
-            moving = true;
-        }
-        if (KeyListener.get().isKeyDown(KeyCode.DOWN) || KeyListener.get().isKeyDown(KeyCode.S)) {
-            player.transform.y += speed * deltaTime;
-            moving = true;
-        }
-        if (KeyListener.get().isKeyDown(KeyCode.UP) || KeyListener.get().isKeyDown(KeyCode.W)) {
-            player.transform.y -= speed * deltaTime;
-            moving = true;
-        }
+        player.update(deltaTime);
 
-        Animator anim = player.getAnimator();
-
-        if (KeyListener.get().isKeyDown(KeyCode.SPACE)) {
-            anim.play("jump");
-            playSoundWithCooldown("jump");
-        } else if (anim.getCurrentName().equals("jump") && anim.isFinished()) {
-            anim.play("idle");
-        } else if (moving) {
-            anim.play("walk");
-        } else {
-            anim.play("idle");
-        }
-
-        // Testing tranform rotation can/ should be removed later on
-        //double cx = player.transform.x + player.transform.width / 2.0;
-        //double cy = player.transform.y + player.transform.height / 2.0;
-        //double mx = MouseListener.get().getX();
-        //double my = MouseListener.get().getY();
-        //double angleRad = Math.atan2(my - cy, mx - cx);
-        //double angleDeg = Math.toDegrees(angleRad);
-        //player.transform.rotation = (float) angleDeg;
         camera.update(deltaTime, player.transform, width, height);
         if (KeyListener.get().isKeyDown(KeyCode.C)) {
             camera.toggleMode();
         }
 
-        // Scene switch logic
-        //if (!changingScene && KeyListener.get().isKeyDown(KeyCode.SPACE)) {
-        //    changingScene = true;
-        //}
-        //if (changingScene && timeToChangeScene > 0) {
-        //   timeToChangeScene -= deltaTime;
-        //} else if (changingScene) {
-        //    Window.changeScene(1);
-        //}
         collidingObjects.clear();
         for (CollisionResult result : collisionWorld.checkCollisions()) {
             if (result.isTrigger) {
@@ -194,7 +128,6 @@ public class LevelEditorScene extends GameScene {
                 default -> {
                 }
             }
-
         }
     }
 
@@ -211,17 +144,56 @@ public class LevelEditorScene extends GameScene {
         soundCooldowns.replaceAll((name, remaining) -> Math.max(0, remaining - deltaTime));
     }
 
+    public void showAttributes() {
+        Label healthLabel = new Label();
+        Label levelLabel = new Label();
+        Label expLabel = new Label();
+        Label damageLabel = new Label();
+        Label defenseLabel = new Label();
+        Label speedLabel = new Label();
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+            Attributes a = player.attributes;
+            healthLabel.setText("❤  HP:  " + (int) a.currentHealth + " / " + (int) a.maxHealth);
+            levelLabel.setText("⭐ LVL: " + a.level);
+            expLabel.setText("✨ EXP: " + a.experience + " / " + a.experienceToNextLevel);
+            damageLabel.setText("⚔  DMG: " + (int) a.damage);
+            defenseLabel.setText("🛡 DEF: " + (int) a.defense);
+            speedLabel.setText("👟 SPD: " + String.format("%.1f", a.movementSpeed));
+        }));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+
+        String labelStyle = "-fx-text-fill: white; -fx-font-size: 13px; -fx-font-family: monospace;";
+        for (Label l : new Label[]{healthLabel, levelLabel, expLabel, damageLabel, defenseLabel, speedLabel}) {
+            l.setStyle(labelStyle);
+        }
+
+        VBox panel = new VBox(5, healthLabel, levelLabel, expLabel, damageLabel, defenseLabel, speedLabel);
+        panel.setStyle(
+                "-fx-background-color: rgba(0,0,0,0.6);"
+                + "-fx-padding: 12;"
+                + "-fx-background-radius: 8;"
+        );
+        panel.setMaxSize(200, 180);
+
+        StackPane.setAlignment(panel, javafx.geometry.Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(panel, new javafx.geometry.Insets(10));
+
+        Window.getRoot().getChildren().add(panel);
+    }
+
     public void buildVolumePanel() {
         Slider masterSlider = createSlider(1.0);
-        masterSlider.valueProperty().addListener((obs, olVal, newVal)
+        masterSlider.valueProperty().addListener((obs, oldVal, newVal)
                 -> AudioManager.get().setMasterVolume(newVal.floatValue()));
 
         Slider sfxSlider = createSlider(1.0);
-        sfxSlider.valueProperty().addListener((obs, olVal, newVal)
+        sfxSlider.valueProperty().addListener((obs, oldVal, newVal)
                 -> AudioManager.get().setSfxVolume(newVal.floatValue()));
 
         Slider musicSlider = createSlider(1.0);
-        musicSlider.valueProperty().addListener((obs, olVal, newVal)
+        musicSlider.valueProperty().addListener((obs, oldVal, newVal)
                 -> AudioManager.get().setMusicVolume(newVal.floatValue()));
 
         VBox panel = new VBox(8,
