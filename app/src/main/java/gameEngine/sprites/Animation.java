@@ -13,6 +13,16 @@ public class Animation {
     private float timer = 0;
     private boolean finished = false;
 
+    /**
+     * Creates an animation from a subset of frames in a sprite sheet.
+     *
+     * @param name unique name used to reference this animation in an Animator
+     * @param sheet the sprite sheet to extract frames from
+     * @param frameIndices ordered array of frame indices to play
+     * @param frameDuration time each frame is displayed, in seconds
+     * @param loop if {@code true} the animation repeats; otherwise it stops on
+     * the last frame
+     */
     public Animation(String name, SpriteSheet sheet, int[] frameIndices, float frameDuration, boolean loop) {
         this.name = name;
         this.frameDuration = frameDuration;
@@ -24,6 +34,12 @@ public class Animation {
         }
     }
 
+    /**
+     * Advances the animation timer and moves to the next frame when due. Does
+     * nothing if the animation has finished and is not looping.
+     *
+     * @param deltaTime elapsed time since the last frame, in seconds
+     */
     public void update(float deltaTime) {
         if (finished) {
             return;
@@ -43,20 +59,39 @@ public class Animation {
         }
     }
 
+    /**
+     * Returns the frame image to display this tick.
+     *
+     * @return the current frame as a WritableImage
+     */
     public WritableImage getCurrentFrame() {
         return cachedFrames[currentFrameIndex];
     }
 
+    /**
+     * Resets the animation to its first frame.
+     */
     public void reset() {
         currentFrameIndex = 0;
         timer = 0;
         finished = false;
     }
 
+    /**
+     * Returns whether the animation has reached its final frame and is not set
+     * to loop.
+     *
+     * @return {@code true} if the animation is finished
+     */
     public boolean isFinished() {
         return finished;
     }
 
+    /**
+     * Returns the name of this animation.
+     *
+     * @return the animation name
+     */
     public String getName() {
         return name;
     }

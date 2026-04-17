@@ -24,42 +24,45 @@ import javafx.scene.text.FontWeight;
 
 /**
  * Overlay panel (toggle with J) that displays every registered SpriteSheet,
- * lets you inspect individual frames, and change frame-width / frame-height
- * per sheet at runtime.
+ * lets you inspect individual frames, and change frame-width / frame-height per
+ * sheet at runtime.
  *
- * Usage – register sheets via SpriteSheetPanel.register(name, sheet)
- * and call SpriteSheetPanel.build() once from LevelEditorScene.init().
- * In LevelEditorScene.update() call SpriteSheetPanel.handleInput().
+ * Usage – register sheets via SpriteSheetPanel.register(name, sheet) and call
+ * SpriteSheetPanel.build() once from LevelEditorScene.init(). In
+ * LevelEditorScene.update() call SpriteSheetPanel.handleInput().
  */
 public class SpriteSheetPanel {
 
     // ---------------------------------------------------------------
     // Registry
     // ---------------------------------------------------------------
-
-    /** All sheets registered for display, keyed by a human-readable label. */
     private static final Map<String, SpriteSheet> registry = new LinkedHashMap<>();
 
-    /**
-     * Live frame dimensions per sheet (separate from the SpriteSheet object so
-     * we can preview different sizes without mutating the running animation).
-     */
     private static final Map<String, int[]> frameSizes = new LinkedHashMap<>();
 
     private static StackPane root;
     private static VBox panel;
     private static boolean visible = false;
 
-    /** Register a sprite sheet so it appears in the panel. */
+    /**
+     * Registers a sprite sheet so it appears in the inspector panel. Must be
+     * called before {@link #build(StackPane)}.
+     *
+     * @param name human-readable label shown in the panel header
+     * @param sheet the SpriteSheet to display and inspect
+     */
     public static void register(String name, SpriteSheet sheet) {
         registry.put(name, sheet);
-        frameSizes.put(name, new int[] { sheet.getFrameWidth(), sheet.getFrameHeight() });
+        frameSizes.put(name, new int[]{sheet.getFrameWidth(), sheet.getFrameHeight()});
     }
 
-    // ---------------------------------------------------------------
-    // Build the panel once and attach it to the scene root
-    // ---------------------------------------------------------------
-
+    /**
+     * Builds the inspector panel and attaches it to the scene root. Must be
+     * called once after all sheets have been registered, typically from
+     * {@code LevelEditorScene.init()}.
+     *
+     * @param sceneRoot the root StackPane to attach the overlay panel to
+     */
     public static void build(StackPane sceneRoot) {
         root = sceneRoot;
 
@@ -68,11 +71,11 @@ public class SpriteSheetPanel {
         panel.setMaxWidth(680);
         panel.setMaxHeight(540);
         panel.setStyle(
-                "-fx-background-color: rgba(10,10,20,0.93);" +
-                        "-fx-background-radius: 12;" +
-                        "-fx-border-color: rgba(120,120,255,0.4);" +
-                        "-fx-border-width: 1;" +
-                        "-fx-border-radius: 12;");
+                "-fx-background-color: rgba(10,10,20,0.93);"
+                + "-fx-background-radius: 12;"
+                + "-fx-border-color: rgba(120,120,255,0.4);"
+                + "-fx-border-width: 1;"
+                + "-fx-border-radius: 12;");
 
         Label title = new Label("◈  SPRITE SHEET INSPECTOR");
         title.setFont(Font.font("Monospace", FontWeight.BOLD, 15));
@@ -102,10 +105,12 @@ public class SpriteSheetPanel {
         sceneRoot.getChildren().add(panel);
     }
 
-    // ---------------------------------------------------------------
-    // Per-sheet row
-    // ---------------------------------------------------------------
-
+    /**
+     * Toggles the panel's visibility. Should be called from
+     * {@code LevelEditorScene.update()} on every frame.
+     *
+     * @param keys the active KeyListener; listens for the J key
+     */
     private static VBox sheetRow(String name, SpriteSheet sheet, VBox parentContent) {
         VBox row = new VBox(8);
 
@@ -151,10 +156,10 @@ public class SpriteSheetPanel {
 
         HBox controls = new HBox(6, nameLabel,
                 new Region() {
-                    {
-                        HBox.setHgrow(this, Priority.ALWAYS);
-                    }
-                },
+            {
+                HBox.setHgrow(this, Priority.ALWAYS);
+            }
+        },
                 wLabel, wField, hLabel, hField);
         controls.setAlignment(Pos.CENTER_LEFT);
 
@@ -165,7 +170,6 @@ public class SpriteSheetPanel {
     // ---------------------------------------------------------------
     // Frame grid
     // ---------------------------------------------------------------
-
     private static TilePane buildFrameGrid(SpriteSheet sheet, int fw, int fh) {
         TilePane grid = new TilePane(4, 4);
         grid.setPrefTileWidth(fw > 0 ? Math.min(fw, 80) : 80);
@@ -176,8 +180,9 @@ public class SpriteSheetPanel {
 
         for (int i = 0; i < totalFrames; i++) {
             WritableImage frame = sheet.getFrame(i);
-            if (frame == null)
+            if (frame == null) {
                 continue;
+            }
 
             ImageView iv = new ImageView(frame);
             iv.setPreserveRatio(true);
@@ -212,14 +217,15 @@ public class SpriteSheetPanel {
     // ---------------------------------------------------------------
     // Toggle
     // ---------------------------------------------------------------
-
-    /** Call from LevelEditorScene.update() */
     public static void handleInput(gameEngine.core.KeyListener keys) {
         if (keys.isKeyJustPressed(javafx.scene.input.KeyCode.J)) {
             toggle();
         }
     }
 
+    /**
+     * Toggles the panel between visible and hidden.
+     */
     public static void toggle() {
         visible = !visible;
         panel.setVisible(visible);
@@ -228,7 +234,6 @@ public class SpriteSheetPanel {
     // ---------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------
-
     private static Label styledLabel(String text) {
         Label l = new Label(text);
         l.setFont(Font.font("Monospace", 12));
@@ -240,13 +245,13 @@ public class SpriteSheetPanel {
         TextField tf = new TextField(val);
         tf.setPrefWidth(54);
         tf.setStyle(
-                "-fx-background-color: rgba(30,30,60,0.9);" +
-                        "-fx-text-fill: #c8c8ff;" +
-                        "-fx-border-color: rgba(100,100,200,0.4);" +
-                        "-fx-border-radius: 4;" +
-                        "-fx-background-radius: 4;" +
-                        "-fx-font-family: monospace;" +
-                        "-fx-font-size: 12px;");
+                "-fx-background-color: rgba(30,30,60,0.9);"
+                + "-fx-text-fill: #c8c8ff;"
+                + "-fx-border-color: rgba(100,100,200,0.4);"
+                + "-fx-border-radius: 4;"
+                + "-fx-background-radius: 4;"
+                + "-fx-font-family: monospace;"
+                + "-fx-font-size: 12px;");
         return tf;
     }
 }

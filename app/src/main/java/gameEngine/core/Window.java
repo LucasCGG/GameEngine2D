@@ -24,10 +24,15 @@ public class Window extends Application {
     public Window() {
         this.width = 1920;
         this.height = 1080;
-        this.title = "Game";
+        this.title = "Deadline Dash";
         clearColor = Color.WHITESMOKE;
     }
 
+    /**
+     * Returns the singleton Window instance, creating it if necessary.
+     *
+     * @return the global Window instance
+     */
     public static Window get() {
         if (Window.window == null) {
             Window.window = new Window();
@@ -36,6 +41,12 @@ public class Window extends Application {
         return Window.window;
     }
 
+    /**
+     * Switches the active game scene.
+     *
+     * @param newScene 0 for LevelEditorScene, 1 for LevelScene
+     * @throws IllegalArgumentException if the scene index is not recognised
+     */
     public static void changeScene(int newScene) {
         switch (newScene) {
             case 0 -> {
@@ -51,18 +62,32 @@ public class Window extends Application {
         }
     }
 
+    /**
+     * Sets the background clear colour used at the start of every frame.
+     *
+     * @param color the JavaFX Color to fill the canvas with before rendering
+     */
     public static void setClearColor(Color color) {
         get().clearColor = color;
     }
 
+    /**
+     * Returns the current background clear colour.
+     *
+     * @return the active clear colour
+     */
     public static Color getClearColor() {
         return get().clearColor;
     }
 
+    /**
+     * JavaFX entry point. Initialises the canvas, wires input listeners, loads
+     * the first scene, and starts the game loop.
+     *
+     * @param stage the primary stage provided by the JavaFX runtime
+     */
     @Override
     public void start(Stage stage) {
-        System.out.println("Hello FXML!");
-
         window = this;
 
         Canvas canvas = new Canvas(width, height);
@@ -117,7 +142,7 @@ public class Window extends Application {
             // System.out.println("Key pressed: " + e.getCode());
         });
         scene.setOnKeyReleased(e -> {
-            keys.keyRealeseHandler().handle(e);
+            keys.keyReleaseHandler().handle(e);
             // System.out.println("Key released: " + e.getCode());
         });
 
@@ -154,6 +179,12 @@ public class Window extends Application {
         loop.start();
     }
 
+    /**
+     * Returns the root StackPane of the JavaFX scene graph. Use this to attach
+     * overlay panels or UI nodes.
+     *
+     * @return the root StackPane
+     */
     public static StackPane getRoot() {
         return root;
     }

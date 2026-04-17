@@ -9,6 +9,13 @@ public class Music {
     private MediaPlayer mediaPlayer;
     private float volume;
 
+    /**
+     * Loads a music track from the classpath and prepares it for looped
+     * playback.
+     *
+     * @param path resource path to the audio file
+     * @param volume initial volume in the range [0.0, 1.0]
+     */
     public Music(String path, float volume) {
         this.volume = volume;
 
@@ -26,24 +33,38 @@ public class Music {
         }
     }
 
+    /**
+     * Starts or resumes playback.
+     */
     public void play() {
         if (mediaPlayer != null) {
             mediaPlayer.play();
         }
     }
 
+    /**
+     * Pauses playback at the current position.
+     */
     public void pause() {
         if (mediaPlayer != null) {
             mediaPlayer.pause();
         }
     }
 
+    /**
+     * Stops playback and rewinds to the beginning.
+     */
     public void stop() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
     }
 
+    /**
+     * Sets the playback volume.
+     *
+     * @param volume volume level in the range [0.0, 1.0]
+     */
     public void setVolume(float volume) {
         this.volume = volume;
 
@@ -52,7 +73,12 @@ public class Music {
         }
     }
 
-    public float getVolume(){
+    /**
+     * Returns the current volume level.
+     *
+     * @return volume in the range [0.0, 1.0]
+     */
+    public float getVolume() {
         return volume;
     }
 }
