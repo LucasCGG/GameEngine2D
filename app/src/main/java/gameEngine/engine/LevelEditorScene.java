@@ -72,7 +72,7 @@ public class LevelEditorScene extends GameScene {
         player.update(deltaTime);
 
         camera.update(deltaTime, player.transform, width, height);
-        if (KeyListener.get().isKeyDown(KeyCode.C)) {
+        if (KeyListener.get().isKeyJustPressed(KeyCode.C)) {
             camera.toggleMode();
         }
 
@@ -123,7 +123,8 @@ public class LevelEditorScene extends GameScene {
                 }
                 case CircleCollider cr -> {
                     graphicsCtx.setStroke(hitting ? Color.RED : Color.GREEN);
-                    graphicsCtx.strokeOval(cr.getCenterX() - cr.radius - camera.x, cr.getCenterY() - cr.radius - camera.y, cr.radius * 2, cr.radius * 2);
+                    graphicsCtx.strokeOval(cr.getCenterX() - cr.radius - camera.x,
+                            cr.getCenterY() - cr.radius - camera.y, cr.radius * 2, cr.radius * 2);
                 }
                 default -> {
                 }
@@ -165,16 +166,15 @@ public class LevelEditorScene extends GameScene {
         timeline.play();
 
         String labelStyle = "-fx-text-fill: white; -fx-font-size: 13px; -fx-font-family: monospace;";
-        for (Label l : new Label[]{healthLabel, levelLabel, expLabel, damageLabel, defenseLabel, speedLabel}) {
+        for (Label l : new Label[] { healthLabel, levelLabel, expLabel, damageLabel, defenseLabel, speedLabel }) {
             l.setStyle(labelStyle);
         }
 
         VBox panel = new VBox(5, healthLabel, levelLabel, expLabel, damageLabel, defenseLabel, speedLabel);
         panel.setStyle(
                 "-fx-background-color: rgba(0,0,0,0.6);"
-                + "-fx-padding: 12;"
-                + "-fx-background-radius: 8;"
-        );
+                        + "-fx-padding: 12;"
+                        + "-fx-background-radius: 8;");
         panel.setMaxSize(200, 180);
 
         StackPane.setAlignment(panel, javafx.geometry.Pos.BOTTOM_RIGHT);
@@ -185,27 +185,25 @@ public class LevelEditorScene extends GameScene {
 
     public void buildVolumePanel() {
         Slider masterSlider = createSlider(1.0);
-        masterSlider.valueProperty().addListener((obs, oldVal, newVal)
-                -> AudioManager.get().setMasterVolume(newVal.floatValue()));
+        masterSlider.valueProperty()
+                .addListener((obs, oldVal, newVal) -> AudioManager.get().setMasterVolume(newVal.floatValue()));
 
         Slider sfxSlider = createSlider(1.0);
-        sfxSlider.valueProperty().addListener((obs, oldVal, newVal)
-                -> AudioManager.get().setSfxVolume(newVal.floatValue()));
+        sfxSlider.valueProperty()
+                .addListener((obs, oldVal, newVal) -> AudioManager.get().setSfxVolume(newVal.floatValue()));
 
         Slider musicSlider = createSlider(1.0);
-        musicSlider.valueProperty().addListener((obs, oldVal, newVal)
-                -> AudioManager.get().setMusicVolume(newVal.floatValue()));
+        musicSlider.valueProperty()
+                .addListener((obs, oldVal, newVal) -> AudioManager.get().setMusicVolume(newVal.floatValue()));
 
         VBox panel = new VBox(8,
                 label("Master"), masterSlider,
                 label("Music"), musicSlider,
-                label("SFX"), sfxSlider
-        );
+                label("SFX"), sfxSlider);
         panel.setStyle(
                 "-fx-background-color: rgba(0,0,0,0.6);"
-                + "-fx-padding: 12;"
-                + "-fx-background-radius: 8;"
-        );
+                        + "-fx-padding: 12;"
+                        + "-fx-background-radius: 8;");
         panel.setMaxSize(200, 160);
 
         StackPane.setAlignment(panel, javafx.geometry.Pos.TOP_RIGHT);

@@ -50,4 +50,8 @@ public class KeyListener {
         return keyPressed[key.ordinal()];
     }
 
+    public boolean isKeyJustPressed(KeyCode key) {
+        return keyPressed[key.ordinal()] && !keyWasPressed[key.ordinal()];
+    }
+
 }
