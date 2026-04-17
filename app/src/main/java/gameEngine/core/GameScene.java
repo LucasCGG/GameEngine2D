@@ -1,4 +1,4 @@
-package gameEngine.engine;
+package gameEngine.core;
 
 import gameEngine.physics.CollisionWorld;
 import javafx.scene.canvas.GraphicsContext;

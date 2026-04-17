@@ -1,4 +1,4 @@
-package gameEngine.engine;
+package gameEngine.core;
 
 import gameEngine.utils.Time;
 import javafx.animation.AnimationTimer;
@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+// import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -90,33 +91,34 @@ public class Window extends Application {
         MouseListener mouse = MouseListener.get();
         scene.setOnMouseMoved(e -> {
             mouse.mouseMoveHandler().handle(e);
-            //System.out.println("Mouse moved: (" + e.getX() + ", " + e.getY() + ")");
+            // System.out.println("Mouse moved: (" + e.getX() + ", " + e.getY() + ")");
         });
         scene.setOnMouseDragged(e -> {
             mouse.mouseMoveHandler().handle(e);
-            //System.out.println("Mouse dragged: (" + e.getX() + ", " + e.getY() + ")");
+            // System.out.println("Mouse dragged: (" + e.getX() + ", " + e.getY() + ")");
         });
         scene.setOnMousePressed(e -> {
             mouse.mousePressHandler().handle(e);
-            //System.out.println("Mouse pressed: " + e.getButton());
+            // System.out.println("Mouse pressed: " + e.getButton());
         });
         scene.setOnMouseReleased(e -> {
             mouse.mouseReleaseHandler().handle(e);
-            //System.out.println("Mouse released: " + e.getButton());
+            // System.out.println("Mouse released: " + e.getButton());
         });
         scene.setOnScroll(e -> {
             mouse.mouseScrollHandler().handle(e);
-            //System.out.println("Mouse scroll: (" + e.getDeltaX() + ", " + e.getDeltaY() + ")");
+            // System.out.println("Mouse scroll: (" + e.getDeltaX() + ", " + e.getDeltaY() +
+            // ")");
         });
 
         KeyListener keys = KeyListener.get();
         scene.setOnKeyPressed(e -> {
             keys.keyPressedHandler().handle(e);
-            //System.out.println("Key pressed: " + e.getCode());
+            // System.out.println("Key pressed: " + e.getCode());
         });
         scene.setOnKeyReleased(e -> {
             keys.keyRealeseHandler().handle(e);
-            //System.out.println("Key released: " + e.getCode());
+            // System.out.println("Key released: " + e.getCode());
         });
 
         stage.setTitle(title);

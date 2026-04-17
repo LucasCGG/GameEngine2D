@@ -3,7 +3,7 @@ package gameEngine.physics;
 import java.util.ArrayList;
 import java.util.List;
 
-import gameEngine.engine.GameObject;
+import gameEngine.core.GameObject;
 
 public class CollisionWorld {
 

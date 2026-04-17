@@ -1,6 +1,6 @@
 package gameEngine.physics;
 
-import gameEngine.engine.Transform;
+import gameEngine.core.Transform;
 
 public class AABBCollider extends Collider {
 

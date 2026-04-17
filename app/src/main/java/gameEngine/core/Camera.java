@@ -1,4 +1,4 @@
-package gameEngine.engine;
+package gameEngine.core;
 
 public class Camera {
 

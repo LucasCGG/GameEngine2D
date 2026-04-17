@@ -1,7 +1,7 @@
 package gameEngine.sprites;
 
-import gameEngine.engine.GameObject;
-import gameEngine.engine.Transform;
+import gameEngine.core.GameObject;
+import gameEngine.core.Transform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;

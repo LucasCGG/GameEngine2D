@@ -1,6 +1,6 @@
 package gameEngine.physics;
 
-import gameEngine.engine.GameObject;
+import gameEngine.core.GameObject;
 
 public class CollisionResult {
 

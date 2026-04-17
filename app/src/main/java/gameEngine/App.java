@@ -1,6 +1,6 @@
 package gameEngine;
 
-import gameEngine.engine.Window;
+import gameEngine.core.Window;
 
 public class App {
 

@@ -1,4 +1,4 @@
-package gameEngine.engine;
+package gameEngine.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,11 +9,14 @@ import java.util.Set;
 
 import gameEngine.attributes.Attributes;
 import gameEngine.audio.AudioManager;
+import gameEngine.entitys.Player;
 import gameEngine.physics.AABBCollider;
 import gameEngine.physics.CircleCollider;
 import gameEngine.physics.Collider;
 import gameEngine.physics.CollisionResult;
 import gameEngine.sprites.Sprite;
+import gameEngine.sprites.SpriteSheet;
+import gameEngine.sprites.SpriteSheetPanel;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.GraphicsContext;
@@ -60,8 +63,16 @@ public class LevelEditorScene extends GameScene {
         player = new Player(100, 100);
         gameObjects.add(player.getSprite());
 
+        
         collisionWorld.register(player.getSprite(), new AABBCollider(player.transform));
         collisionWorld.register(item, new CircleCollider(item.transform));
+
+        SpriteSheetPanel.register("Player",
+                new SpriteSheet("assets/images/32bit-PaperAirplane-Spritesheet.png", 1025,
+                        1025));
+        SpriteSheetPanel.register("Rock",
+                new SpriteSheet("assets/images/platformPack_item005.png", 64, 64));
+        SpriteSheetPanel.build(Window.getRoot());
     }
 
     @Override
@@ -75,6 +86,8 @@ public class LevelEditorScene extends GameScene {
         if (KeyListener.get().isKeyJustPressed(KeyCode.C)) {
             camera.toggleMode();
         }
+
+        SpriteSheetPanel.handleInput(KeyListener.get());
 
         collidingObjects.clear();
         for (CollisionResult result : collisionWorld.checkCollisions()) {
