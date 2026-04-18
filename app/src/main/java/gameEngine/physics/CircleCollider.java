@@ -7,6 +7,12 @@ public class CircleCollider extends Collider {
     public float radius;
     public float offsetX, offsetY;
 
+    /**
+     * Creates a circle collider sized to the smaller of the transform's width
+     * and height, centred on the transform.
+     *
+     * @param transform the owning object's transform
+     */
     public CircleCollider(Transform transform) {
         super(transform);
         this.radius = Math.min(transform.width, transform.height) / 2.0f;
@@ -14,6 +20,16 @@ public class CircleCollider extends Collider {
         this.offsetY = transform.height / 2.0f;
     }
 
+    /**
+     * Creates a circle collider with explicit radius and centre offset.
+     *
+     * @param transform the owning object's transform
+     * @param radius circle radius in pixels
+     * @param offsetX horizontal offset from the transform origin to the circle
+     * centre
+     * @param offsetY vertical offset from the transform origin to the circle
+     * centre
+     */
     public CircleCollider(Transform transform, float radius, float offsetX, float offsetY) {
         super(transform);
         this.radius = radius;
@@ -21,10 +37,20 @@ public class CircleCollider extends Collider {
         this.offsetY = offsetY;
     }
 
+    /**
+     * Returns the world-space X coordinate of the circle centre.
+     *
+     * @return centre X in pixels
+     */
     public float getCenterX() {
         return transform.x + offsetX;
     }
 
+    /**
+     * Returns the world-space Y coordinate of the circle centre.
+     *
+     * @return centre Y in pixels
+     */
     public float getCenterY() {
         return transform.y + offsetY;
     }

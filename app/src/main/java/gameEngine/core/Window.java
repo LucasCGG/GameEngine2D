@@ -24,10 +24,15 @@ public class Window extends Application {
     public Window() {
         this.width = 1920;
         this.height = 1080;
-        this.title = "Game";
+        this.title = "Deadline Dash";
         clearColor = Color.WHITESMOKE;
     }
 
+    /**
+     * Returns the singleton Window instance, creating it if necessary.
+     *
+     * @return the global Window instance
+     */
     public static Window get() {
         if (Window.window == null) {
             Window.window = new Window();
@@ -36,6 +41,12 @@ public class Window extends Application {
         return Window.window;
     }
 
+    /**
+     * Switches the active game scene.
+     *
+     * @param newScene 0 for LevelEditorScene, 1 for LevelScene
+     * @throws IllegalArgumentException if the scene index is not recognised
+     */
     public static void changeScene(int newScene) {
         switch (newScene) {
             case 0 -> {
@@ -51,18 +62,32 @@ public class Window extends Application {
         }
     }
 
+    /**
+     * Sets the background clear colour used at the start of every frame.
+     *
+     * @param color the JavaFX Color to fill the canvas with before rendering
+     */
     public static void setClearColor(Color color) {
         get().clearColor = color;
     }
 
+    /**
+     * Returns the current background clear colour.
+     *
+     * @return the active clear colour
+     */
     public static Color getClearColor() {
         return get().clearColor;
     }
 
+    /**
+     * JavaFX entry point. Initialises the canvas, wires input listeners, loads
+     * the first scene, and starts the game loop.
+     *
+     * @param stage the primary stage provided by the JavaFX runtime
+     */
     @Override
     public void start(Stage stage) {
-        System.out.println("Hello FXML!");
-
         window = this;
 
         Canvas canvas = new Canvas(width, height);
@@ -71,6 +96,8 @@ public class Window extends Application {
         root = new StackPane(canvas);
         Scene scene = new Scene(root, width, height);
 
+        canvas.setFocusTraversable(true);
+        canvas.requestFocus();
         canvas.widthProperty().bind(scene.widthProperty());
         canvas.heightProperty().bind(scene.heightProperty());
 
@@ -91,22 +118,27 @@ public class Window extends Application {
         MouseListener mouse = MouseListener.get();
         scene.setOnMouseMoved(e -> {
             mouse.mouseMoveHandler().handle(e);
+            e.consume();
             // System.out.println("Mouse moved: (" + e.getX() + ", " + e.getY() + ")");
         });
         scene.setOnMouseDragged(e -> {
             mouse.mouseMoveHandler().handle(e);
+            e.consume();
             // System.out.println("Mouse dragged: (" + e.getX() + ", " + e.getY() + ")");
         });
         scene.setOnMousePressed(e -> {
             mouse.mousePressHandler().handle(e);
+            e.consume();
             // System.out.println("Mouse pressed: " + e.getButton());
         });
         scene.setOnMouseReleased(e -> {
             mouse.mouseReleaseHandler().handle(e);
+            e.consume();
             // System.out.println("Mouse released: " + e.getButton());
         });
         scene.setOnScroll(e -> {
             mouse.mouseScrollHandler().handle(e);
+            e.consume();
             // System.out.println("Mouse scroll: (" + e.getDeltaX() + ", " + e.getDeltaY() +
             // ")");
         });
@@ -114,10 +146,12 @@ public class Window extends Application {
         KeyListener keys = KeyListener.get();
         scene.setOnKeyPressed(e -> {
             keys.keyPressedHandler().handle(e);
+            e.consume();
             // System.out.println("Key pressed: " + e.getCode());
         });
         scene.setOnKeyReleased(e -> {
-            keys.keyRealeseHandler().handle(e);
+            keys.keyReleaseHandler().handle(e);
+            e.consume();
             // System.out.println("Key released: " + e.getCode());
         });
 
@@ -154,6 +188,12 @@ public class Window extends Application {
         loop.start();
     }
 
+    /**
+     * Returns the root StackPane of the JavaFX scene graph. Use this to attach
+     * overlay panels or UI nodes.
+     *
+     * @return the root StackPane
+     */
     public static StackPane getRoot() {
         return root;
     }

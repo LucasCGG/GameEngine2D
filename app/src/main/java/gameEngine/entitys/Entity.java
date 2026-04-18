@@ -3,6 +3,7 @@ package gameEngine.entitys;
 import gameEngine.attributes.Attributes;
 import gameEngine.core.GameObject;
 import gameEngine.core.Transform;
+import gameEngine.sprites.Sprite;
 
 public abstract class Entity extends GameObject {
 
@@ -12,4 +13,6 @@ public abstract class Entity extends GameObject {
         super(name, transform);
         this.attributes = attributes;
     }
+
+    public abstract Sprite getSprite();
 }

@@ -3,6 +3,7 @@ package gameEngine.entitys;
 import gameEngine.attributes.Attributes;
 // import gameEngine.audio.AudioManager;
 import gameEngine.core.KeyListener;
+import gameEngine.core.MouseListener;
 import gameEngine.core.Transform;
 import gameEngine.sprites.Animation;
 import gameEngine.sprites.Animator;
@@ -19,7 +20,7 @@ public class Player extends Entity {
     // private static final float JUMP_SOUND_COOLDOWN = 0.5f;
 
     public Player(float x, float y) {
-        super("Player", new Transform(x, y, 100, 100), new Attributes(100, 5, 10, 3));
+        super("Player", new Transform(x, y, 100, 100), new Attributes(100, 30, 10, 3));
         this.speed = attributes.movementSpeed;
 
         SpriteSheet sheet = new SpriteSheet("assets/images/32bit-PaperAirplane-Spritesheet.png", 1025, 1025);
@@ -32,7 +33,7 @@ public class Player extends Entity {
         animator.addAnimation(walk);
         animator.play("idle");
 
-        sprite = new Sprite("player", animator, transform);
+        sprite = new Sprite("player", animator, transform, true);
     }
 
     @Override
@@ -40,22 +41,55 @@ public class Player extends Entity {
         boolean moving = false;
         KeyListener keys = KeyListener.get();
 
+        // if (keys.isKeyDown(KeyCode.RIGHT) || keys.isKeyDown(KeyCode.D)) {
+        // transform.x += speed * deltaTime;
+        // moving = true;
+        // }
+        // if (keys.isKeyDown(KeyCode.LEFT) || keys.isKeyDown(KeyCode.A)) {
+        // transform.x -= speed * deltaTime;
+        // moving = true;
+        // }
+        // if (keys.isKeyDown(KeyCode.DOWN) || keys.isKeyDown(KeyCode.S)) {
+        // transform.y += speed * deltaTime;
+        // moving = true;
+        // }
+        // if (keys.isKeyDown(KeyCode.UP) || keys.isKeyDown(KeyCode.W)) {
+        // transform.y -= speed * deltaTime;
+        // moving = true;
+        // }
+
+        double inputX = 0, inputY = 0;
         if (keys.isKeyDown(KeyCode.RIGHT) || keys.isKeyDown(KeyCode.D)) {
-            transform.x += speed * deltaTime;
+            inputY += 1;
             moving = true;
         }
         if (keys.isKeyDown(KeyCode.LEFT) || keys.isKeyDown(KeyCode.A)) {
-            transform.x -= speed * deltaTime;
+            inputY -= 1;
             moving = true;
         }
         if (keys.isKeyDown(KeyCode.DOWN) || keys.isKeyDown(KeyCode.S)) {
-            transform.y += speed * deltaTime;
+            inputX -= 1;
             moving = true;
         }
         if (keys.isKeyDown(KeyCode.UP) || keys.isKeyDown(KeyCode.W)) {
-            transform.y -= speed * deltaTime;
+            inputX += 1;
             moving = true;
         }
+
+        double cx = transform.x + transform.width / 2.0;
+        double cy = transform.y + transform.height / 2.0;
+        double mx = MouseListener.get().getX();
+        double my = MouseListener.get().getY();
+        double angleRad = Math.atan2(my - cy, mx - cx);
+        transform.rotation = (float) Math.toDegrees(angleRad);
+
+        double cos = Math.cos(angleRad);
+        double sin = Math.sin(angleRad);
+        double worldX = inputX * cos - inputY * sin;
+        double worldY = inputX * sin + inputY * cos;
+
+        transform.x += worldX * speed * deltaTime;
+        transform.y += worldY * speed * deltaTime;
 
         Animator anim = sprite.getAnimator();
         if (keys.isKeyDown(KeyCode.L)) {
@@ -91,6 +125,7 @@ public class Player extends Entity {
         speed = attributes.movementSpeed;
     }
 
+    @Override
     public Sprite getSprite() {
         return sprite;
     }
