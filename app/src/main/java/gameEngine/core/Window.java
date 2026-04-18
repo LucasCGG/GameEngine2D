@@ -96,6 +96,8 @@ public class Window extends Application {
         root = new StackPane(canvas);
         Scene scene = new Scene(root, width, height);
 
+        canvas.setFocusTraversable(true);
+        canvas.requestFocus();
         canvas.widthProperty().bind(scene.widthProperty());
         canvas.heightProperty().bind(scene.heightProperty());
 
@@ -116,22 +118,27 @@ public class Window extends Application {
         MouseListener mouse = MouseListener.get();
         scene.setOnMouseMoved(e -> {
             mouse.mouseMoveHandler().handle(e);
+            e.consume();
             // System.out.println("Mouse moved: (" + e.getX() + ", " + e.getY() + ")");
         });
         scene.setOnMouseDragged(e -> {
             mouse.mouseMoveHandler().handle(e);
+            e.consume();
             // System.out.println("Mouse dragged: (" + e.getX() + ", " + e.getY() + ")");
         });
         scene.setOnMousePressed(e -> {
             mouse.mousePressHandler().handle(e);
+            e.consume();
             // System.out.println("Mouse pressed: " + e.getButton());
         });
         scene.setOnMouseReleased(e -> {
             mouse.mouseReleaseHandler().handle(e);
+            e.consume();
             // System.out.println("Mouse released: " + e.getButton());
         });
         scene.setOnScroll(e -> {
             mouse.mouseScrollHandler().handle(e);
+            e.consume();
             // System.out.println("Mouse scroll: (" + e.getDeltaX() + ", " + e.getDeltaY() +
             // ")");
         });
@@ -139,10 +146,12 @@ public class Window extends Application {
         KeyListener keys = KeyListener.get();
         scene.setOnKeyPressed(e -> {
             keys.keyPressedHandler().handle(e);
+            e.consume();
             // System.out.println("Key pressed: " + e.getCode());
         });
         scene.setOnKeyReleased(e -> {
             keys.keyReleaseHandler().handle(e);
+            e.consume();
             // System.out.println("Key released: " + e.getCode());
         });
 
