@@ -9,7 +9,6 @@ import java.util.Set;
 
 import gameEngine.attributes.Attributes;
 import gameEngine.audio.AudioManager;
-import gameEngine.entitys.Entity;
 import gameEngine.entitys.Player;
 import gameEngine.physics.AABBCollider;
 import gameEngine.physics.CircleCollider;
