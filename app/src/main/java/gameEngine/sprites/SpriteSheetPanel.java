@@ -5,7 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import gameEngine.entitys.Entity;
+// TODO: import "Entity" package from "game" logic instead of gameEngine 
+// import gameEngine.entitys.Entity;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;

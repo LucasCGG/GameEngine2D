@@ -48,18 +48,19 @@ public class Window extends Application {
      * @throws IllegalArgumentException if the scene index is not recognised
      */
     public static void changeScene(int newScene) {
-        switch (newScene) {
-            case 0 -> {
-                currentScene = new LevelEditorScene();
-                currentScene.init(window.width, window.height);
-            }
-            case 1 -> {
-                currentScene = new LevelScene();
-                currentScene.init(window.width, window.height);
-            }
-            default ->
-                throw new IllegalArgumentException("Unknown scene '" + newScene + "'");
-        }
+        // TODO: Make this use some Map<String, Scene> to switch between them instead of "int"
+        // switch (newScene) {
+        //     case 0 -> {
+        //         currentScene = new LevelEditorScene();
+        //         currentScene.init(window.width, window.height);
+        //     }
+        //     case 1 -> {
+        //         currentScene = new LevelScene();
+        //         currentScene.init(window.width, window.height);
+        //     }
+        //     default ->
+        //         throw new IllegalArgumentException("Unknown scene '" + newScene + "'");
+        // }
     }
 
     /**
