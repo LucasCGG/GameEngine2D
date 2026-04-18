@@ -79,4 +79,5 @@ public class Animator {
     public String getCurrentName() {
         return currentName;
     }
+
 }

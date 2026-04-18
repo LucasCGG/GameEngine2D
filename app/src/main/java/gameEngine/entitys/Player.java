@@ -33,7 +33,7 @@ public class Player extends Entity {
         animator.addAnimation(walk);
         animator.play("idle");
 
-        sprite = new Sprite("player", animator, transform);
+        sprite = new Sprite("player", animator, transform, true);
     }
 
     @Override
@@ -125,6 +125,7 @@ public class Player extends Entity {
         speed = attributes.movementSpeed;
     }
 
+    @Override
     public Sprite getSprite() {
         return sprite;
     }

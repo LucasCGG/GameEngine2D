@@ -9,6 +9,7 @@ import java.util.Set;
 
 import gameEngine.attributes.Attributes;
 import gameEngine.audio.AudioManager;
+import gameEngine.entitys.Entity;
 import gameEngine.entitys.Player;
 import gameEngine.physics.AABBCollider;
 import gameEngine.physics.CircleCollider;
@@ -57,19 +58,17 @@ public class LevelEditorScene extends GameScene {
         showAttributes();
 
         item = new Sprite("rock", "assets/images/platformPack_item005.png",
-                new Transform(400, 400, 64, 64));
+                new Transform(400, 400, 64, 64), false);
         gameObjects.add(item);
 
         player = new Player(100, 100);
         gameObjects.add(player.getSprite());
 
-        
         collisionWorld.register(player.getSprite(), new AABBCollider(player.transform));
         collisionWorld.register(item, new CircleCollider(item.transform));
 
-        SpriteSheetPanel.register("Player",
-                new SpriteSheet("assets/images/32bit-PaperAirplane-Spritesheet.png", 1025,
-                        1025));
+        SpriteSheetPanel.registerEntity("Player", player,
+                new SpriteSheet("assets/images/32bit-PaperAirplane-Spritesheet.png", 1025, 1025));
         SpriteSheetPanel.register("Rock",
                 new SpriteSheet("assets/images/platformPack_item005.png", 64, 64));
         SpriteSheetPanel.build(Window.getRoot());
